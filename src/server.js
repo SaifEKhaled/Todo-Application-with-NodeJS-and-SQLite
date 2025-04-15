@@ -1,33 +1,33 @@
-import express from 'express'
-import path, {dirname} from 'path'
-import { fileURLToPath } from 'url'
-import authRoutes from './routes/authRoutes.js' //import the auth routes from the authRoutes.js file
-import todoRoutes from './routes/todoRoutes.js' //import the todo routes from the todoRoutes.js file
-import authMiddleware from './middleware/authMiddleware.js'
+import express from "express";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import authRoutes from "./routes/authRoutes.js";
+import todoRoutes from "./routes/todoRoutes.js";
+import authMiddleware from "./middleware/authMiddleware.js";
 
-const app = express() //create an instance of the express application
-const PORT = process.env.PORT || 5003 //set the port to listen on, default to 5003 if not specified in environment variables
+const app = express();
+const PORT = process.env.PORT || 5003;
 
+// Get the file path from the URL of the current module
+const __filename = fileURLToPath(import.meta.url);
+// Get the directory name from the file path
+const __dirname = dirname(__filename);
 
-// get the file path from the url of the current module 
-const __filename = fileURLToPath(import.meta.url) //get the file path of the current module
-//the directory name from the file path
-const __dirname = dirname(__filename) //get the directory name from the file path
+// Middleware
+app.use(express.json());
+// Serves the HTML file from the /public directory
+// Tells express to serve all files from the public folder as static assets / file. Any requests for the css files will be resolved to the public directory.
+app.use(express.static(path.join(__dirname, "../public")));
 
-
-//middleware
-app.use(express.json())
-
-app.use(express.static(path.join(__dirname, '../public'))) //serve static files from the public directory
-//Serving up the html file from the /public directory
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')) //send the index.html file to the client 
-})
+// Serving up the HTML file from the /public directory
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 // Routes
-app.use('/auth',authRoutes) //use the authRoutes middleware for the /auth route
-app.use('/todos',authMiddleware,todoRoutes) //use the todoRoutes middleware for the /todos route
+app.use("/auth", authRoutes);
+app.use("/todos", authMiddleware, todoRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`) //log a message when the server starts
-})
+  console.log(`Server has started on port: ${PORT}`);
+});
